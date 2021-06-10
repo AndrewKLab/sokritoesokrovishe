@@ -35,7 +35,8 @@ const NewRecordsPage = ({
   const hideDialogС = () => setVisibleС(false);
 
   useEffect(() => {
-    if (lastPostsType !== "" && lastPostsType !== 'random') {
+    console.log(lastPostsType)
+    if (lastPostsType !== undefined && lastPostsType !== "" && lastPostsType !== 'random') {
       dispatch(postsActions.readNewPosts(0)).then(() => {
         setOffset({
           semD: config.postsLimits.semD,

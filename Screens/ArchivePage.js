@@ -3,7 +3,7 @@ import { SafeAreaView, Image } from 'react-native';
 import { Card } from 'react-native-paper';
 import { styles } from '../_styles';
 import { config } from '../_helpers';
-import { DialogAccess } from '../_components';
+import { DialogFullAccess } from '../_components';
 
 const ArchivePage = ({ navigation }) => {
   const [visible, setVisible] = useState(false);
@@ -63,12 +63,9 @@ const ArchivePage = ({ navigation }) => {
           source={require('../assets/7d.png')}
         />
       </Card>
-      <DialogAccess
+      <DialogFullAccess
         visible={visible}
         hideDialog={hideDialog}
-        text={
-          'Для того чтобы получить доступ ко всем архивам с наших ресурсов, необходимо приобрести полную версию нашего приложения по ссылке ниже.'
-        }
       />
     </SafeAreaView>
   );

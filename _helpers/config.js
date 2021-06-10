@@ -1,14 +1,16 @@
 import { Platform } from 'react-native';
 
+const access = 'limited';
+
 export const config = {
-  access: 'full',
+  access: access,
   market:
     Platform === "ios" ? 'App Store' : 'Google Play',
   market_link:
     Platform === "ios" ? 'https://www.apple.com/ru/app-store/' : 'https://play.google.com/store',
   postsLimits: {
-    semD: 6,
-    kkz: 1,
-    sokrsokr: 9
+    semD: access === 'full' ? 5 : 1,
+    kkz: access === 'full' ? 5 : 6,
+    sokrsokr: access === 'full' ? 6 : 9
   }
 };
