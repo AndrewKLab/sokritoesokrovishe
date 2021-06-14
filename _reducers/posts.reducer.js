@@ -208,6 +208,12 @@ export function posts(state = initialState, action) {
         lastPostsType: action.lastPostsType,
       };
 
+    case postsConstants.SET_POSTS_LIMITS:
+      return {
+        ...state,
+        postsLimits: action.postsLimits,
+      };
+
     default:
       return state;
   }

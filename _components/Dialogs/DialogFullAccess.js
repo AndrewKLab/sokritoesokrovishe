@@ -1,51 +1,48 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { Portal, Dialog, List, Button, Text, IconButton } from 'react-native-paper';
 import { Linking, Alert, View } from 'react-native';
 import { config } from '../../_helpers';
-import InAppBilling from "react-native-billing";
+import Purchases from 'react-native-purchases';
+import { configConstants } from '../../_constants';
+import { Loading } from '../';
 
 export const DialogFullAccess = ({ visible, hideDialog }) => {
-
-  const purchase = useCallback(
-    async () => {
-      await InAppBilling.close();
+  const [pakeges, setPakages] = useState('2');
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const getPakeges = async () => {
+      const offerings = await Purchases.getOfferings();
+      console.log(offerings)
       try {
-        await InAppBilling.open();
-        if (!await InAppBilling.isPurchased('pro_app_version')) {
-          const details = await InAppBilling.purchase('pro_app_version');
-          console.log('You purchased: ', details);
+        if (offerings.current !== null) {
+          setPakages(offerings.current.availablePackages)
+          setLoading(false)
         }
-        // const transactionStatus = await InAppBilling.getPurchaseTransactionDetails('pro_app_version');
-        // console.log('Transaction Status', transactionStatus);
-        // const productDetails = await InAppBilling.getProductDetails('pro_app_version');
-        // console.log(productDetails);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        //await InAppBilling.consumePurchase('pro_app_version');
-        await InAppBilling.close();
+      } catch (e) {
+        console.log(e)
       }
     }
-  )
+    getPakeges();
+  }, [])
 
-
-  const checkSubscription = useCallback(
-    async () => {
-      try {
-        await InAppBilling.open();
-        // If subscriptions/products are updated server-side you
-        // will have to update cache with loadOwnedPurchasesFromGoogle()
-        await InAppBilling.loadOwnedPurchasesFromGoogle();
-        const isSubscribed = await InAppBilling.isSubscribed("pro_app_version")
-        console.log("Customer subscribed: ", isSubscribed);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        await InAppBilling.close();
+  const onSelection = async () => {
+    try {
+      const { purchaserInfo } = await Purchases.purchasePackage(pakeges[0])
+      if (typeof purchaserInfo.entitlements.active[configConstants.ENTITLEMENT_ID] !== undefined) {
+        console.log(123)
+        hideDialog()
+      }
+    } catch (e) {
+      if (e.userCancelled) {
+        Alert.alert(e.message)
       }
     }
-  )
 
+  }
+
+  if (loading) {
+    return <Loading />
+  }
 
   return (
     <Portal>
@@ -66,15 +63,17 @@ export const DialogFullAccess = ({ visible, hideDialog }) => {
             <List.Item style={{ padding: 0, alignItems: 'center' }} title="Разные шрифты" titleNumberOfLines={4} left={props => <Text style={{ marginTop: 6 }}>{'-'}</Text>} />
           </List.Section>
           <View style={{ alignItems: 'center', }}>
-            <Button style={{
-              width: '70%',
-              marginVertical: 8,
-              borderRadius: 20
-            }}
-              mode={'contained'}
-              onPress={() => purchase('pro_app_version')}>
-              {'Будут цены'}
-            </Button>
+            {pakeges.map((item, index) => (
+              <Button key={index} style={{
+                width: '70%',
+                marginVertical: 8,
+                borderRadius: 20
+              }}
+                mode={'contained'}
+                onPress={() => onSelection()}>
+                {item.product.price_string}
+              </Button>
+            ))}
           </View>
         </Dialog.Content>
       </Dialog>

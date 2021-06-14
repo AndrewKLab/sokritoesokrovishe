@@ -1,6 +1,6 @@
 import { postsConstants } from '../_constants';
 import { postsService } from '../_services';
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 import {config} from '../_helpers';
 
@@ -16,20 +16,22 @@ export const postsActions = {
   searchPosts,
   searchMorePosts,
   getLastPostsType,
-  setLastPostsType
+  setLastPostsType,
+  setPostsLimits
 };
 
-function readNewPosts(offset) {
+function readNewPosts(offset, postsLimits) {
   return (dispatch) => {
     dispatch(request(offset));
+    
     return postsService
-      .readNewPosts('https://sokrsokr.net', offset, config.postsLimits.sokrsokr)
+      .readNewPosts('https://sokrsokr.net', offset, postsLimits.sokrsokr)
       .then((sokrsokr) => {
         return postsService
-          .readNewPosts('https://8doktorov.ru', offset, config.postsLimits.kkz)
+          .readNewPosts('https://8doktorov.ru', offset, postsLimits.kkz)
           .then((kkz) => {
             return postsService
-              .readNewPosts('https://proekt7d.ru', offset, config.postsLimits.semD)
+              .readNewPosts('https://proekt7d.ru', offset, postsLimits.semD)
               .then((proekt7d) => {
                 let lp = sokrsokr.data.concat(kkz.data.concat(proekt7d.data));
                 lp.sort((a, b) => moment(b.post_date) - moment(a.post_date));
@@ -58,18 +60,17 @@ function readNewPosts(offset) {
   }
 }
 
-function readMoreNewPosts(offset) {
+function readMoreNewPosts(offset, postsLimits) {
   return (dispatch) => {
     dispatch(request(offset));
-
     return postsService
-      .readNewPosts('https://sokrsokr.net', offset.sokrsokr, config.postsLimits.sokrsokr)
+      .readNewPosts('https://sokrsokr.net', offset.sokrsokr, postsLimits.sokrsokr)
       .then((sokrsokr) => {
         return postsService
-          .readNewPosts('https://8doktorov.ru', offset.kkz, config.postsLimits.kkz)
+          .readNewPosts('https://8doktorov.ru', offset.kkz, postsLimits.kkz)
           .then((kkz) => {
             return postsService
-              .readNewPosts('https://proekt7d.ru', offset.semD, config.postsLimits.semD)
+              .readNewPosts('https://proekt7d.ru', offset.semD, postsLimits.semD)
               .then((proekt7d) => {
                 let lp = sokrsokr.data.concat(kkz.data.concat(proekt7d.data));
                 lp.sort((a, b) => moment(b.post_date) - moment(a.post_date));
@@ -389,4 +390,8 @@ function getLastPostsType() {
 function setLastPostsType(lastPostsType) {
   AsyncStorage.setItem('lastPostsType', lastPostsType);
   return { type: postsConstants.SET_LAST_POSTS_TYPE, lastPostsType };
+}
+
+function setPostsLimits(postsLimits) {
+  return { type: postsConstants.SET_POSTS_LIMITS, postsLimits };
 }

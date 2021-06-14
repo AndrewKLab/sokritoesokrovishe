@@ -14,7 +14,7 @@ import { stylesActions, postsActions } from '../../_actions';
 import { fonts, config } from '../../_helpers'
 import { DialogFullAccess } from '../';
 
-const HeaderRight = ({ theme, fontsize, font, dispatch, lastPostsType }) => {
+const HeaderRight = ({ theme, fontsize, font, dispatch, lastPostsType, user }) => {
 
   const [visible, setVisible] = useState(false);
   const openMenu = () => setVisible(true);
@@ -82,7 +82,7 @@ const HeaderRight = ({ theme, fontsize, font, dispatch, lastPostsType }) => {
         />
       </View>
       <View style={{ marginHorizontal: 8 }}>
-        {config.access !== 'full' && (
+        {user !== 'full' && (
           <>
             <View style={{ backgroundColor: '#eee', position: 'absolute', height: '100%', width: '100%', zIndex: 1, opacity: 0.8, justifyContent: 'center', alignItems: 'center' }}>
 
@@ -152,12 +152,13 @@ const HeaderRight = ({ theme, fontsize, font, dispatch, lastPostsType }) => {
 };
 function mapStateToProps(state) {
   const { lastPostsType } = state.posts;
-  const { theme, fontsize, font } = state.style;
+  const { theme, fontsize, font, user } = state.style;
   return {
     lastPostsType,
     theme,
     fontsize,
-    font
+    font,
+    user
   };
 }
 

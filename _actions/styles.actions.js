@@ -1,6 +1,7 @@
 import { stylesConstants } from '../_constants';
 import { styleService } from '../_services';
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Orientation from 'react-native-orientation';
 
 export const stylesActions = {
   getTheme,
@@ -11,7 +12,9 @@ export const stylesActions = {
   setFontSize,
   getOrintation,
   setOrintation,
+  setUser
 };
+
 
 function getTheme() {
   return (dispatch) => {
@@ -95,3 +98,8 @@ function getOrintation(orintation) {
 function setOrintation(orintation) {
   return { type: stylesConstants.SET_ORINTATION, orintation };
 }
+
+function setUser(user) {
+  return { type: stylesConstants.SET_USER, user };
+}
+

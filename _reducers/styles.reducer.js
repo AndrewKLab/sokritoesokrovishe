@@ -44,6 +44,12 @@ export function style(state = initialState, action) {
         ...state,
         orintation: action.orintation,
       };
+    case stylesConstants.SET_USER:
+      return {
+        ...state,
+        user: action.user,
+      };
+
     default:
       return state;
   }

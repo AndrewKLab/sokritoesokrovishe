@@ -134,8 +134,8 @@ android {
         applicationId 'com.sokritoesokrovishe'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName '1.0.1'
+        versionCode 4
+        versionName '1.0.3'
     }
     splits {
         abi {
@@ -197,7 +197,6 @@ dependencies {
     implementation 'com.facebook.react:react-native:+'  // From node_modules
 
     compile project(':react-native-orientation')
-    compile project(':react-native-billing')
 
     implementation project(':react-native-splash-screen')
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'

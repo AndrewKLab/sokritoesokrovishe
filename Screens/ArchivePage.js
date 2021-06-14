@@ -4,15 +4,16 @@ import { Card } from 'react-native-paper';
 import { styles } from '../_styles';
 import { config } from '../_helpers';
 import { DialogFullAccess } from '../_components';
+import { connect } from 'react-redux';
 
-const ArchivePage = ({ navigation }) => {
+const ArchivePage = ({ navigation, user }) => {
   const [visible, setVisible] = useState(false);
 
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
 
   const goToCategories = (title, link) => {
-    if (config.access === 'full') {
+    if (user === 'full') {
       navigation.navigate('Ресурс', {
         title: title,
         link: link,
@@ -70,5 +71,11 @@ const ArchivePage = ({ navigation }) => {
     </SafeAreaView>
   );
 };
+function mapStateToProps(state) {
+  const { user } = state.style;
+  return {
+    user
+  };
+}
 
-export default ArchivePage;
+export default connect(mapStateToProps)(ArchivePage);

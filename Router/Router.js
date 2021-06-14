@@ -29,11 +29,13 @@ import {
 import Orientation from 'react-native-orientation';
 import { config } from '../_helpers';
 import SplashScreen from 'react-native-splash-screen'
+import Purchases from 'react-native-purchases';
+import { configConstants } from '../_constants';
 
 //const Tab = createBottomTabNavigator();
 const DrawerNavigator = createDrawerNavigator();
 
-const Router = ({ dispatch, theme }) => {
+const Router = ({ dispatch, theme, user }) => {
   const [loading, setLoading] = useState(true);
   const [visibleС, setVisibleС] = useState(false);
   const showDialogС = () => setVisibleС(true);
@@ -70,7 +72,7 @@ const Router = ({ dispatch, theme }) => {
           />
         </Drawer.Section>
         <View>
-          {config.access !== 'full' && (
+          {user !== 'full' && (
             <>
               <View style={{ backgroundColor: '#eee', position: 'absolute', height: '100%', width: '100%', zIndex: 10000, opacity: 0.8, justifyContent: 'center', alignItems: 'center' }}>
 
@@ -85,7 +87,7 @@ const Router = ({ dispatch, theme }) => {
             </>
           )
           }
-          {config.access !== 'full' ? (
+          {user !== 'full' ? (
             <View style={{ zIndex: 0 }}>
               <Drawer.Item
                 label="Избранное"
@@ -102,7 +104,7 @@ const Router = ({ dispatch, theme }) => {
             />
           )}
         </View>
-        {config.access === 'full' ? null : (
+        {user === 'full' ? null : (
           <View style={{ alignItems: 'center' }}>
             <Button style={{
               width: '70%',
@@ -126,25 +128,50 @@ const Router = ({ dispatch, theme }) => {
   }
 
   useEffect(() => {
-    dispatch(stylesActions.getTheme())
-      .then(() => {
-        Orientation.getOrientation((err, orientation) => {
-          dispatch(stylesActions.setOrintation(orientation === 'PORTRAIT' ? 'portrait' : 'landscape'));
-        });
-      })
-      .then(() => {
-        dispatch(stylesActions.getFont());
-      })
-      .then(() => {
-        dispatch(stylesActions.getFontSize());
-      })
-      .then(() => {
-        dispatch(postsActions.getLastPostsType());
-      })
-      .then(() => {
-        setLoading(false);
-        SplashScreen.hide();
-      });
+    const preLoadParams = async () => {
+      const purchaserInfo = await Purchases.getPurchaserInfo();
+      const purchaserInfoUser = typeof purchaserInfo.entitlements.active[configConstants.ENTITLEMENT_ID] !== undefined;
+      if (purchaserInfoUser) {
+        await dispatch(stylesActions.setUser('full'));
+      } else {
+        await dispatch(stylesActions.setUser('limited'));
+      }
+      const orientation = Orientation.getInitialOrientation()
+      await dispatch(stylesActions.setOrintation(orientation))
+      await dispatch(stylesActions.getTheme());
+      await dispatch(postsActions.getLastPostsType());
+      await dispatch(postsActions.setPostsLimits(purchaserInfoUser === true ? {
+        semD: 5,
+        kkz: 5,
+        sokrsokr: 6
+      } : {
+        semD: 1,
+        kkz: 6,
+        sokrsokr: 9
+      }));
+      await dispatch(stylesActions.getFont());
+      await dispatch(stylesActions.getFontSize());
+
+      setLoading(false);
+      SplashScreen.hide();
+
+    }
+
+    preLoadParams();
+    // dispatch(stylesActions.getTheme()).then(() => {
+    //   dispatch(postsActions.getLastPostsType()).then(() => {
+    //     dispatch(stylesActions.getFont()).then(() => {
+    //       dispatch(stylesActions.getFontSize()).then(() => {
+    //         Orientation.getOrientation((err, orientation) => {
+    //           dispatch(stylesActions.setOrintation(orientation === 'PORTRAIT' ? 'portrait' : 'landscape').then(() => {
+    //             setLoading(false);
+    //             SplashScreen.hide();
+    //           }))
+    //         })
+    //       })
+    //     });
+    //   })
+    // });
 
 
     // Listner for orientation change LANDSCAPE / PORTRAIT
@@ -157,7 +184,7 @@ const Router = ({ dispatch, theme }) => {
   }, []);
 
   const orientationChange = (orientation) => {
-    dispatch(stylesActions.setOrintation(orientation === 'PORTRAIT' ? 'portrait' : 'landscape'));
+    dispatch(stylesActions.setOrintation(orientation));
   };
 
   if (loading === true) {
@@ -204,9 +231,10 @@ const Router = ({ dispatch, theme }) => {
 };
 
 function mapStateToProps(state) {
-  const { theme } = state.style;
+  const { theme, user } = state.style;
   return {
     theme,
+    user
   };
 }
 

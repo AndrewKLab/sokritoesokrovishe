@@ -16,7 +16,8 @@ const Posts = ({
   readAllNewPosts,
   onRefresh,
   refreshing,
-  showDialogB
+  showDialogB,
+  user
 }) => {
   const renderFooter = () => {
     if (posts_error === '' && readAllNewPosts !== undefined) {
@@ -52,20 +53,22 @@ const Posts = ({
           dispatch={dispatch}
           posts={posts_name}
           showDialogB={showDialogB}
+          user={user}
         />
       )}
       //Setting the number of column
-      numColumns={orintation === 'landscape' ? 2 : 1}
-      key={orintation === 'landscape' ? 2 : 1}
+      numColumns={orintation === 'LANDSCAPE' ? 2 : 1}
+      key={orintation === 'LANDSCAPE' ? 2 : 1}
       keyExtractor={(item, index) => index.toString()}
     />
   );
 };
 
 function mapStateToProps(state) {
-  const { orintation } = state.style;
+  const { orintation, user } = state.style;
   const { posts_loading, posts_error } = state.posts;
   return {
+    user,
     orintation,
     posts_loading,
     posts_error,

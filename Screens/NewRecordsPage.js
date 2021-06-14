@@ -12,7 +12,9 @@ const NewRecordsPage = ({
   lastposts,
   lastposts_loading,
   lastposts_error,
-  lastPostsType
+  lastPostsType,
+  postsLimits,
+  user
 }) => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -23,7 +25,7 @@ const NewRecordsPage = ({
   });
   const [visibleA, setVisibleA] = useState(false);
   const [visibleB, setVisibleB] = useState(false);
-  const [visibleС, setVisibleС] = useState(config.access === 'full' ? false : true);
+  const [visibleС, setVisibleС] = useState(user === 'full' ? false : true);
 
   const showDialogA = () => setVisibleA(true);
   const hideDialogA = () => setVisibleA(false);
@@ -37,11 +39,11 @@ const NewRecordsPage = ({
   useEffect(() => {
     console.log(lastPostsType)
     if (lastPostsType !== undefined && lastPostsType !== "" && lastPostsType !== 'random') {
-      dispatch(postsActions.readNewPosts(0)).then(() => {
+      dispatch(postsActions.readNewPosts(0, postsLimits)).then(() => {
         setOffset({
-          semD: config.postsLimits.semD,
-          kkz: config.postsLimits.kkz,
-          sokrsokr: config.postsLimits.sokrsokr
+          semD: postsLimits.semD,
+          kkz: postsLimits.kkz,
+          sokrsokr: postsLimits.sokrsokr
         });
         setLoading(false);
       });
@@ -52,13 +54,13 @@ const NewRecordsPage = ({
       });
     }
 
-  }, [dispatch]);
+  }, [dispatch, lastPostsType, postsLimits]);
 
   const onRefresh = () => {
     setRefreshing(true);
     if (!lastposts_loading) {
       if (lastPostsType === 'last') {
-        dispatch(postsActions.readNewPosts(0)).then(() => {
+        dispatch(postsActions.readNewPosts(0, postsLimits)).then(() => {
           setRefreshing(false);
         });
       } else {
@@ -73,7 +75,7 @@ const NewRecordsPage = ({
     setLoading(true);
     if (!lastposts_loading) {
       if (lastPostsType === 'last') {
-        dispatch(postsActions.readNewPosts(0)).then(() => {
+        dispatch(postsActions.readNewPosts(0, postsLimits)).then(() => {
           setLoading(false);
         });
       } else {
@@ -87,11 +89,11 @@ const NewRecordsPage = ({
   const readAllNewPosts = () => {
     if (!lastposts_loading) {
       if (lastPostsType === 'last') {
-        dispatch(postsActions.readMoreNewPosts(offset)).then(() => {
+        dispatch(postsActions.readMoreNewPosts(offset, postsLimits)).then(() => {
           setOffset({
-            semD: offset.semD + config.postsLimits.semD,
-            kkz: offset.kkz + config.postsLimits.kkz,
-            sokrsokr: offset.sokrsokr + config.postsLimits.sokrsokr
+            semD: offset.semD + postsLimits.semD,
+            kkz: offset.kkz + postsLimits.kkz,
+            sokrsokr: offset.sokrsokr + postsLimits.sokrsokr
           });
         });
       } else {
@@ -144,12 +146,15 @@ const NewRecordsPage = ({
 };
 
 function mapStateToProps(state) {
-  const { lastposts, lastposts_loading, lastposts_error, lastPostsType } = state.posts;
+  const { lastposts, lastposts_loading, lastposts_error, lastPostsType, postsLimits } = state.posts;
+  const { user } = state.style;
   return {
+    user,
     lastposts,
     lastposts_loading,
     lastposts_error,
-    lastPostsType
+    lastPostsType,
+    postsLimits
   };
 }
 

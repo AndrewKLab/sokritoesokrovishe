@@ -10,7 +10,7 @@ import moment from 'moment';
 import localization from 'moment/locale/ru';
 import { postsActions } from '../_actions';
 
-const Reccord = ({ route, dispatch, font, fontsize, theme }) => {
+const Reccord = ({ route, dispatch, font, fontsize, theme, user }) => {
   const rec = route.params.reccord;
   const posts = route.params.posts;
   const [favorite, setFavorite] = useState(rec.favorite);
@@ -60,7 +60,7 @@ const Reccord = ({ route, dispatch, font, fontsize, theme }) => {
               display: 'flex',
               flexDirection: 'row',
             }}>
-            {config.access === 'full' && <View
+            {user === 'full' && <View
               style={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -73,7 +73,7 @@ const Reccord = ({ route, dispatch, font, fontsize, theme }) => {
             <IconButton
               icon={favorite === true ? 'heart' : 'heart-outline'}
               size={24}
-              onPress={() => { if (config.access !== 'full') { showDialog() } else { dispatch(postsActions.toggleFavorites(rec, posts)), setFavorite(!favorite) } }}
+              onPress={() => { if (user !== 'full') { showDialog() } else { dispatch(postsActions.toggleFavorites(rec, posts)), setFavorite(!favorite) } }}
             />
             <IconButton
               icon="share"
@@ -92,11 +92,12 @@ const Reccord = ({ route, dispatch, font, fontsize, theme }) => {
 };
 
 function mapStateToProps(state) {
-  const { font, fontsize, theme } = state.style;
+  const { font, fontsize, theme, user } = state.style;
   return {
     font,
     fontsize,
     theme,
+    user
   };
 }
 

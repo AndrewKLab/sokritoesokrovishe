@@ -15,13 +15,13 @@ import moment from 'moment';
 import localization from 'moment/locale/ru';
 
 
-export const ReccordItem = ({ item, navigation, dispatch, posts, showDialogB }) => {
+export const ReccordItem = ({ item, navigation, dispatch, posts, showDialogB, user }) => {
   const [visible, setVisible] = useState(false);
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
 
   const goToReccord = () => {
-    if (config.access === 'full') {
+    if (user === 'full') {
       navigation.navigate('Запись', {
         title: item.post_title,
         reccord: item,
@@ -61,8 +61,8 @@ export const ReccordItem = ({ item, navigation, dispatch, posts, showDialogB }) 
           </Caption>
         </View>
       </Card.Content>
-      <Card.Actions style={{ justifyContent: config.access === 'full' ? 'space-between' : 'flex-end', }}>
-        {config.access === 'full' && <View
+      <Card.Actions style={{ justifyContent: user === 'full' ? 'space-between' : 'flex-end', }}>
+        {user === 'full' && <View
           style={{
             display: 'flex',
             flexDirection: 'row',
@@ -81,7 +81,7 @@ export const ReccordItem = ({ item, navigation, dispatch, posts, showDialogB }) 
           <IconButton
             icon={item.favorite === true ? 'heart' : 'heart-outline'}
             size={24}
-            onPress={() => { if (config.access !== 'full') { showDialogB() } else { dispatch(postsActions.toggleFavorites(item, posts)) } }}
+            onPress={() => { if (user !== 'full') { showDialogB() } else { dispatch(postsActions.toggleFavorites(item, posts)) } }}
           />
           <IconButton
             icon="share"
