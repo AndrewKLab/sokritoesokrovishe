@@ -1,4 +1,4 @@
 export const configConstants = {
     API_KEY: 'KBdtrYaQcovtHyahdYsLmZfxhjxeFgRn',
-    ENTITLEMENT_ID: 'Pro'
+    ENTITLEMENT_ID: 'pro_submit'
 };

@@ -1,18 +1,18 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { Portal, Dialog, List, Button, Text, IconButton } from 'react-native-paper';
 import { Linking, Alert, View } from 'react-native';
-import { config } from '../../_helpers';
+import { connect } from 'react-redux';
 import Purchases from 'react-native-purchases';
 import { configConstants } from '../../_constants';
-import { Loading } from '../';
+import { stylesActions, postsActions } from '../../_actions';
 
-export const DialogFullAccess = ({ visible, hideDialog }) => {
+const DialogFullAccess = ({ visible, hideDialog, dispatch }) => {
   const [pakeges, setPakages] = useState('2');
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const getPakeges = async () => {
       const offerings = await Purchases.getOfferings();
-      console.log(offerings)
+      //console.log(offerings)
       try {
         if (offerings.current !== null) {
           setPakages(offerings.current.availablePackages)
@@ -25,23 +25,30 @@ export const DialogFullAccess = ({ visible, hideDialog }) => {
     getPakeges();
   }, [])
 
-  const onSelection = async () => {
+  const onSelection = async (pakege) => {
     try {
-      const { purchaserInfo } = await Purchases.purchasePackage(pakeges[0])
-      if (typeof purchaserInfo.entitlements.active[configConstants.ENTITLEMENT_ID] !== undefined) {
-        console.log(123)
+      console.log(pakege)
+      const { purchaserInfo } = await Purchases.purchasePackage(pakege)
+      if (purchaserInfo.entitlements.active[configConstants.ENTITLEMENT_ID] !== undefined) {
+        await dispatch(stylesActions.setUser('full'));
+        await dispatch(postsActions.setPostsLimits({
+          semD: 5,
+          kkz: 5,
+          sokrsokr: 6
+        }));
         hideDialog()
       }
     } catch (e) {
+
       if (e.userCancelled) {
-        Alert.alert(e.message)
+        console.log(e.message)
       }
     }
 
   }
 
   if (loading) {
-    return <Loading />
+    return null
   }
 
   return (
@@ -64,15 +71,18 @@ export const DialogFullAccess = ({ visible, hideDialog }) => {
           </List.Section>
           <View style={{ alignItems: 'center', }}>
             {pakeges.map((item, index) => (
-              <Button key={index} style={{
+              <View key={index} style={{ alignItems: 'center', width: '100%'}}>
+              <Text>{item.product.title.replace('(Сокрытое Сокровище о Христе)', '')}</Text>
+              <Button  style={{
                 width: '70%',
                 marginVertical: 8,
                 borderRadius: 20
               }}
                 mode={'contained'}
-                onPress={() => onSelection()}>
+                onPress={() => onSelection(pakeges[index])}>
                 {item.product.price_string}
               </Button>
+              </View>
             ))}
           </View>
         </Dialog.Content>
@@ -80,3 +90,14 @@ export const DialogFullAccess = ({ visible, hideDialog }) => {
     </Portal>
   );
 };
+
+function mapStateToProps(state) {
+  const { theme, user } = state.style;
+  return {
+    theme,
+    user
+  };
+}
+
+const connectedDialogFullAccess = connect(mapStateToProps)(DialogFullAccess);
+export { connectedDialogFullAccess as DialogFullAccess}

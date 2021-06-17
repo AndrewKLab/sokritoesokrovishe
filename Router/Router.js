@@ -5,13 +5,14 @@ import {
   Button
 } from 'react-native-paper';
 import { connect } from 'react-redux';
-import { SafeAreaView, View } from 'react-native';
+import { Alert, SafeAreaView, View } from 'react-native';
 import {
   NavigationContainer,
   DefaultTheme,
   DarkTheme,
 } from '@react-navigation/native';
 import {
+  Text,
   Provider as PaperProvider,
   DarkTheme as PaperDarkTheme,
 } from 'react-native-paper';
@@ -27,7 +28,6 @@ import {
   SubscribeNavigator
 } from './StackRouters.js';
 import Orientation from 'react-native-orientation';
-import { config } from '../_helpers';
 import SplashScreen from 'react-native-splash-screen'
 import Purchases from 'react-native-purchases';
 import { configConstants } from '../_constants';
@@ -41,12 +41,33 @@ const Router = ({ dispatch, theme, user }) => {
   const showDialogС = () => setVisibleС(true);
   const hideDialogС = () => setVisibleС(false);
 
+  const [isAnonimus, setIsAnonimus] = useState(true);
+  const [userId, setUserId] = useState(false);
+  const [subscriptionActive, setSubscriptionActive] = useState(false);
+
+  const getUserData = async () => {
+    setIsAnonimus(await Purchases.isAnonymous());
+    setUserId(await Purchases.getAppUserID());
+
+    const purchaserInfo = await Purchases.getPurchaserInfo();
+    setSubscriptionActive(purchaserInfo.entitlements.active[configConstants.ENTITLEMENT_ID] !== undefined)
+    console.log(purchaserInfo)
+  }
+
   function CustomDrawerContent({ navigation }) {
     const [active, setActive] = useState('Новые записи');
     const selectScreen = (title) => {
       setActive(title);
       navigation.navigate(title);
     };
+
+    const restorePurchases = async () => {
+      try {
+        const restore = await Purchases.restoreTransactions();
+      } catch (e) {
+        Alert.alert(e.message);
+      }
+    }
 
 
     return (
@@ -118,6 +139,15 @@ const Router = ({ dispatch, theme, user }) => {
           </View>
         )}
 
+        {/* <Text >{`User ID: ${isAnonimus === true ? isAnonimus : userId}`}</Text>
+        <Text >{`Подписка PRO: ${subscriptionActive === true ? 'ACTIVE' : 'DISABLED'}`}</Text>
+        <View style={{ alignItems: 'center' }}>
+          <Button
+            mode={'link'}
+            onPress={() => restorePurchases()}>
+            {'Восстановить подписку'}
+          </Button>
+        </View> */}
         <DialogFullAccess
           visible={visibleС}
           hideDialog={hideDialogС}
@@ -129,13 +159,22 @@ const Router = ({ dispatch, theme, user }) => {
 
   useEffect(() => {
     const preLoadParams = async () => {
+      SplashScreen.hide();
+
+      Purchases.setDebugLogsEnabled(true);
+      Purchases.setup(configConstants.API_KEY);
+
+      getUserData();
+
       const purchaserInfo = await Purchases.getPurchaserInfo();
-      const purchaserInfoUser = typeof purchaserInfo.entitlements.active[configConstants.ENTITLEMENT_ID] !== undefined;
+      const purchaserInfoUser = purchaserInfo.entitlements.active[configConstants.ENTITLEMENT_ID] !== undefined;
+
       if (purchaserInfoUser) {
         await dispatch(stylesActions.setUser('full'));
       } else {
         await dispatch(stylesActions.setUser('limited'));
       }
+
       const orientation = Orientation.getInitialOrientation()
       await dispatch(stylesActions.setOrintation(orientation))
       await dispatch(stylesActions.getTheme());
@@ -153,26 +192,10 @@ const Router = ({ dispatch, theme, user }) => {
       await dispatch(stylesActions.getFontSize());
 
       setLoading(false);
-      SplashScreen.hide();
 
     }
 
     preLoadParams();
-    // dispatch(stylesActions.getTheme()).then(() => {
-    //   dispatch(postsActions.getLastPostsType()).then(() => {
-    //     dispatch(stylesActions.getFont()).then(() => {
-    //       dispatch(stylesActions.getFontSize()).then(() => {
-    //         Orientation.getOrientation((err, orientation) => {
-    //           dispatch(stylesActions.setOrintation(orientation === 'PORTRAIT' ? 'portrait' : 'landscape').then(() => {
-    //             setLoading(false);
-    //             SplashScreen.hide();
-    //           }))
-    //         })
-    //       })
-    //     });
-    //   })
-    // });
-
 
     // Listner for orientation change LANDSCAPE / PORTRAIT
     Orientation.addOrientationListener(orientationChange);
