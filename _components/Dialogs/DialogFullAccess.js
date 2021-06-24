@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { Portal, Dialog, List, Button, Text, IconButton } from 'react-native-paper';
-import { Linking, Alert, View } from 'react-native';
+import { Linking, Alert, View, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import Purchases from 'react-native-purchases';
 import { configConstants } from '../../_constants';
@@ -10,6 +10,9 @@ const DialogFullAccess = ({ visible, hideDialog, dispatch }) => {
   const [pakeges, setPakages] = useState('2');
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    if(Dimensions.get('window').height <= 600){
+      console.log('go')
+    }
     const getPakeges = async () => {
       const offerings = await Purchases.getOfferings();
       //console.log(offerings)
@@ -52,8 +55,8 @@ const DialogFullAccess = ({ visible, hideDialog, dispatch }) => {
   }
 
   return (
-    <Portal>
-      <Dialog visible={visible} onDismiss={hideDialog}>
+    <Portal >
+      <Dialog visible={visible} onDismiss={hideDialog} >
         <IconButton
           icon="close"
           size={20}
