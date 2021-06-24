@@ -1,7 +1,7 @@
 import { stylesConstants } from '../_constants';
 import { styleService } from '../_services';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Orientation from 'react-native-orientation';
+import { Platform } from "react-native";
 
 export const stylesActions = {
   getTheme,
@@ -47,8 +47,8 @@ function getFont() {
       if (response !== null) {
         dispatch(success(response));
       } else {
-        AsyncStorage.setItem('font', 'sans-serif');
-        dispatch(failure('sans-serif'));
+        AsyncStorage.setItem('font', Platform.OS === 'ios' ? 'Arial' : 'sans-serif');
+        dispatch(failure(Platform.OS === 'ios' ? 'Arial' : 'sans-serif'));
       }
     });
   };

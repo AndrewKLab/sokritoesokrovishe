@@ -11,7 +11,7 @@ import {
 import { View, Linking, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { stylesActions, postsActions } from '../../_actions';
-import { fonts, config } from '../../_helpers'
+import { fonts } from '../../_helpers'
 import { DialogFullAccess } from '../';
 
 const HeaderRight = ({ theme, fontsize, font, dispatch, lastPostsType, user }) => {

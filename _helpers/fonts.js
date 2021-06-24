@@ -1,3 +1,8 @@
+import { Platform } from "react-native";
 export const fonts = {
-    default: ['sans-serif', 'serif', 'Cormorant' ]
+    default: [
+        Platform.OS === 'ios' ? 'Arial' : 'sans-serif',
+        'serif',
+        'Cormorant' 
+        ]
 }
