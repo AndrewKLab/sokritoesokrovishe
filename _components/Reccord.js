@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Image, ScrollView } from 'react-native';
+import { View, Image, ScrollView,  } from 'react-native';
 import { Text, Title, IconButton } from 'react-native-paper';
 import { Container, DialogFullAccess, Divider } from '../_components';
 import { styles } from '../_styles';
@@ -10,7 +10,7 @@ import moment from 'moment';
 import localization from 'moment/locale/ru';
 import { postsActions } from '../_actions';
 
-const Reccord = ({ route, dispatch, font, fontsize, theme, user }) => {
+const Reccord = ({ navigation, route, dispatch, font, fontsize, theme, user }) => {
   const rec = route.params.reccord;
   const posts = route.params.posts;
   const [favorite, setFavorite] = useState(rec.favorite);
@@ -52,7 +52,7 @@ const Reccord = ({ route, dispatch, font, fontsize, theme, user }) => {
           }}>
           <View>
             <Text>
-            {moment(rec.datetime).locale('ru', localization).format('L')}
+              {moment(rec.datetime).locale('ru', localization).format('L')}
             </Text>
           </View>
           <View
@@ -85,6 +85,7 @@ const Reccord = ({ route, dispatch, font, fontsize, theme, user }) => {
         <DialogFullAccess
           visible={visible}
           hideDialog={hideDialog}
+          navigation={navigation}
         />
       </Container>
     </ScrollView>

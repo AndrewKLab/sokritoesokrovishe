@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, Image } from 'react-native';
+import { SafeAreaView, Image, Dimensions } from 'react-native';
 import { Card } from 'react-native-paper';
 import { styles } from '../_styles';
 import { config } from '../_helpers';

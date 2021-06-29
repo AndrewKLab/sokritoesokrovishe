@@ -8,19 +8,19 @@ import {
   Text,
   Colors
 } from 'react-native-paper';
-import { View, Linking, Alert } from 'react-native';
+import { View, Linking, Alert, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import { stylesActions, postsActions } from '../../_actions';
 import { fonts } from '../../_helpers'
 import { DialogFullAccess } from '../';
 
-const HeaderRight = ({ theme, fontsize, font, dispatch, lastPostsType, user }) => {
+const HeaderRight = ({ navigation, theme, fontsize, font, dispatch, lastPostsType, user }) => {
 
   const [visible, setVisible] = useState(false);
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
   const [visibleС, setVisibleС] = useState(false);
-  const showDialogС = () => setVisibleС(true);
+  const showDialogС = () => setVisibleС(true) ;
   const hideDialogС = () => setVisibleС(false);
 
   const handlePress = useCallback(
@@ -146,6 +146,7 @@ const HeaderRight = ({ theme, fontsize, font, dispatch, lastPostsType, user }) =
       <DialogFullAccess
         visible={visibleС}
         hideDialog={hideDialogС}
+        navigation={navigation}
       />
     </Menu>
   );

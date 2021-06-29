@@ -27,7 +27,7 @@ function mapStateToProps(state) {
 const screenOptions = (theme, navigation, route) => {
   return {
     headerLeft: () => <HeaderLeft navigation={navigation} route={route} />,
-    headerRight: () => <HeaderRight />,
+    headerRight: () => <HeaderRight navigation={navigation} />,
     headerStyle: {
       backgroundColor:
         theme === 'default' ? MainTheme.colors.primary : '#1f1f1f',
@@ -122,13 +122,13 @@ const connectedFavoritesNavigator = connect(mapStateToProps)(
 );
 export { connectedFavoritesNavigator as FavoritesNavigator };
 
-const SubscribeNavigator = ({ theme }) => {
+const SubscribeNavigator = ({ route }) => {
   return (
     <Stack.Navigator
-      screenOptions={({ navigation, route }) =>
-        screenOptions(theme, navigation, route)
-      }>
-      <Stack.Screen name="ПРО" options={{title: ''}}  component={SubscribePage} />
+    screenOptions={{
+      headerShown: false
+    }}>
+      <Stack.Screen name="ПРО" options={{title: ''}}  component={props => <SubscribePage {...props} route={route}/>} />
     </Stack.Navigator>
   );
 };

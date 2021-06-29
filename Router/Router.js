@@ -5,7 +5,7 @@ import {
   Button
 } from 'react-native-paper';
 import { connect } from 'react-redux';
-import { Alert, SafeAreaView, View } from 'react-native';
+import { Alert, SafeAreaView, View, Dimensions } from 'react-native';
 import {
   NavigationContainer,
   DefaultTheme,
@@ -35,11 +35,11 @@ import { configConstants } from '../_constants';
 //const Tab = createBottomTabNavigator();
 const DrawerNavigator = createDrawerNavigator();
 
-const Router = ({ dispatch, theme, user }) => {
+const Router = ({ navigation, dispatch, theme, user }) => {
   const [loading, setLoading] = useState(true);
   const [visibleС, setVisibleС] = useState(false);
-  const showDialogС = () => setVisibleС(true);
-  const hideDialogС = () => setVisibleС(false);
+
+
 
   const [isAnonimus, setIsAnonimus] = useState(true);
   const [userId, setUserId] = useState(false);
@@ -60,6 +60,8 @@ const Router = ({ dispatch, theme, user }) => {
       setActive(title);
       navigation.navigate(title);
     };
+    const showDialogС = () => setVisibleС(true);
+    const hideDialogС = () => setVisibleС(false);
 
     const restorePurchases = async () => {
       try {
@@ -151,6 +153,7 @@ const Router = ({ dispatch, theme, user }) => {
         <DialogFullAccess
           visible={visibleС}
           hideDialog={hideDialogС}
+          navigation={navigation}
         />
 
       </SafeAreaView>

@@ -1,18 +1,15 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { Portal, Dialog, List, Button, Text, IconButton } from 'react-native-paper';
-import { Linking, Alert, View, Dimensions } from 'react-native';
+import { Linking, Alert, View, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import Purchases from 'react-native-purchases';
 import { configConstants } from '../_constants';
 import { stylesActions, postsActions } from '../_actions';
 
-const SubscribePage = ({ visible, hideDialog, dispatch }) => {
+const SubscribePage = ({ dispatch, navigation, route }) => {
     const [pakeges, setPakages] = useState('2');
     const [loading, setLoading] = useState(true);
     useEffect(() => {
-        // if(Dimensions.get('window').height <= 600){
-        //   console.log('go')
-        // }
         const getPakeges = async () => {
             const offerings = await Purchases.getOfferings();
             //console.log(offerings)
@@ -27,6 +24,11 @@ const SubscribePage = ({ visible, hideDialog, dispatch }) => {
         }
         getPakeges();
     }, [])
+
+    const hideDialog = () => {
+        route.params.hideDialog()
+        navigation.goBack()
+    }
 
     const onSelection = async (pakege) => {
         try {
@@ -55,7 +57,7 @@ const SubscribePage = ({ visible, hideDialog, dispatch }) => {
     }
 
     return (
-        <View >
+        <ScrollView >
 
             <IconButton
                 icon="close"
@@ -73,7 +75,7 @@ const SubscribePage = ({ visible, hideDialog, dispatch }) => {
                     <List.Item style={{ padding: 0, alignItems: 'center' }} title="Разные шрифты" titleNumberOfLines={4} left={props => <Text style={{ marginTop: 6 }}>{'-'}</Text>} />
                 </List.Section>
                 <View style={{ alignItems: 'center', }}>
-                    {pakeges.map((item, index) => (
+                    {pakeges !== undefined && pakeges.map((item, index) => (
                         <View key={index} style={{ alignItems: 'center', width: '100%' }}>
                             <Text>{item.product.title.replace('(Сокрытое Сокровище о Христе)', '')}</Text>
                             <Button style={{
@@ -89,7 +91,7 @@ const SubscribePage = ({ visible, hideDialog, dispatch }) => {
                     ))}
                 </View>
             </Dialog.Content>
-        </View>
+        </ScrollView>
     );
 };
 

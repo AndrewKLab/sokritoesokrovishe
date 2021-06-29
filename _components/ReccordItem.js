@@ -33,6 +33,7 @@ export const ReccordItem = ({ item, navigation, dispatch, posts, showDialogB, us
           title: item.post_title,
           reccord: item,
           posts: posts,
+          navigation: navigation
         });
       } else {
         showDialogB()

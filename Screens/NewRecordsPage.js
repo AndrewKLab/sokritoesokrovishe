@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, View } from 'react-native';
+import { SafeAreaView, Dimensions, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { postsActions } from '../_actions';
 import { styles } from '../_styles';
 import { Alert, Loading, Posts, DialogAccess, DialogFullAccess } from '../_components';
-import { config } from '../_helpers';
+
 
 const NewRecordsPage = ({
   dispatch,
@@ -25,7 +25,7 @@ const NewRecordsPage = ({
   });
   const [visibleA, setVisibleA] = useState(false);
   const [visibleB, setVisibleB] = useState(false);
-  const [visibleС, setVisibleС] = useState(user === 'full' ? false : true);
+  const [visibleС, setVisibleС] = useState(false);
 
   const showDialogA = () => setVisibleA(true);
   const hideDialogA = () => setVisibleA(false);
@@ -37,7 +37,7 @@ const NewRecordsPage = ({
   const hideDialogС = () => setVisibleС(false);
 
   useEffect(() => {
-    console.log(lastPostsType)
+    showDialogС()
     if (lastPostsType !== undefined && lastPostsType !== "" && lastPostsType !== 'random') {
       dispatch(postsActions.readNewPosts(0, postsLimits)).then(() => {
         setOffset({
@@ -140,6 +140,7 @@ const NewRecordsPage = ({
       <DialogFullAccess
         visible={visibleС}
         hideDialog={hideDialogС}
+        navigation={navigation}
       />
     </SafeAreaView>
   );

@@ -88,14 +88,15 @@ const Categories = ({
             return item.subcategories.length > 0 ? (
               <List.Accordion
                 title={item.name}
-                left={(props) => <List.Icon {...props} icon="folder" />}>
+                left={(props) => <List.Icon {...props} icon="folder" style={{marginLeft: 0}} />}>
                 {item.subcategories.map((subcategory, index) => (
                   <List.Item
+                    key={index}
                     title={subcategory.name}
                     onPress={() => {
                       navigation.navigate('Записи', {
-                        title: item.name,
-                        category: item.term_id,
+                        title: subcategory.name,
+                        category: subcategory.term_id,
                         link: route.params.link,
                       });
                     }}
