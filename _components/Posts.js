@@ -75,5 +75,6 @@ function mapStateToProps(state) {
   };
 }
 
+
 const connectedPosts = connect(mapStateToProps)(Posts);
 export { connectedPosts as Posts };

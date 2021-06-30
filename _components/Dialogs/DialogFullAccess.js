@@ -13,7 +13,7 @@ const DialogFullAccess = ({ visible, hideDialog, dispatch, navigation }) => {
   useEffect(() => {
     const getPakeges = async () => {
       const offerings = await Purchases.getOfferings();
-      //console.log(offerings)
+      console.log(offerings)
       try {
         if (offerings.current !== null) {
           setPakages(offerings.current.availablePackages)

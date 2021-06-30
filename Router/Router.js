@@ -50,7 +50,7 @@ const Router = ({ navigation, dispatch, theme, user }) => {
     setUserId(await Purchases.getAppUserID());
 
     const purchaserInfo = await Purchases.getPurchaserInfo();
-    setSubscriptionActive(purchaserInfo.entitlements.active[configConstants.ENTITLEMENT_ID] !== undefined)
+    setSubscriptionActive(true)
     console.log(purchaserInfo)
   }
 
@@ -170,7 +170,7 @@ const Router = ({ navigation, dispatch, theme, user }) => {
       getUserData();
 
       const purchaserInfo = await Purchases.getPurchaserInfo();
-      const purchaserInfoUser = purchaserInfo.entitlements.active[configConstants.ENTITLEMENT_ID] !== undefined;
+      const purchaserInfoUser = true
 
       if (purchaserInfoUser) {
         await dispatch(stylesActions.setUser('full'));
